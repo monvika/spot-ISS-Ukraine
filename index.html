@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        form{
+            display: flex;
+            justify-content: center;  
+        }
+        input{
+            margin: 0 10px;
+        }
+      
+        .background{
+            background-image: url(./ISS.jpg);
+            background-size: cover;
+            width:100%;
+            height:100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        p{
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+            text-shadow: 2px 2px #300157;
+            text-align: center;
+        }
+        label{
+            font-weight: bold; 
+            color: black;
+        }
+    </style>
+
+</head>
+
+<body>
+<!--Medium Task-->
+<div class='background'>
+    <p>The International Space Station is moving at close to 28,000 km/h so its location changes really fast! <br> When is the next time the ISS will pass Ukraine?</p>
+    <form onsubmit="showInput(event)">
+        <label for="latitude">Latitude</label>
+        <input type="text" class='input' value='50.45466'placeholder="latitude">
+        <label for="longitude">Longitude</label>
+        <input type="text" class='input' value='30.5238' placeholder="longitude">
+        <input type="submit" id='button' value='click'>
+    </form>
+</div>
+    <script>
+        // Kyiv coordinates: 50.45466 30.5238
+        // International Space Station API: http://api.open-notify.org
+        //I declare variables
+        let uaLatitude;
+        let uaLongitude;
+        //creating button
+        const button = document.getElementById('button');
+        //when click the button I should see my values from input in console
+        button.onclick = function showInput(e) {
+            e.preventDefault();
+            let input = document.querySelectorAll('.input');
+            for (let i = 0; i < input.length; i++) {
+                console.log(input[i].value);
+                uaLatitude = input[0].value;
+                uaLongitude = input[1].value;
+            }
+        //and now I'm using new method fetch to send request and to receive response when the ISS will cross my coordinates https://www.n2yo.com/api/
+        // api.codetabs.com: Cross-origin resource sharing: If the server doesn't allow this computer to connect its API because of CORS there is a small trick using this URL: 
+            fetch(`https://api.codetabs.com/v1/proxy?quest=https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/${uaLatitude}/${uaLongitude}/0/2/300/&apiKey=6KX6KM-YW5GRK-PRYM2U-4L13`)
+            .then(
+                response => response.json()
+            ).then(
+                data => {
+                    //it will show 3 passes, so I just choose the first one and convert it in normal time to read
+                    alert(new Date(data.passes[0].maxUTC * 1000))
+                    console.log(data)
+                }
+            )
+        }
+    </script>
+</body>
+
+</html>
